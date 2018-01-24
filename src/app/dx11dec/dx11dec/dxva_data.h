@@ -19,9 +19,24 @@ struct DXVADecBuf
     UINT bufSize;
 };
 
+struct AvcDxvaBufs
+{
+    AvcDxvaBufs();
+
+    uint32_t width = 320;
+    uint32_t height = 240;
+    std::vector<uint8_t> pic;
+    std::vector<uint8_t> slc;
+    std::vector<uint8_t> qm;
+    std::vector<uint8_t> bs;
+};
+
 struct HevcDxvaBufs
 {
     HevcDxvaBufs();
+
+    uint32_t width = 0;
+    uint32_t height = 0;
     std::vector<uint8_t> pic;
     std::vector<uint8_t> slc;
     std::vector<uint8_t> qm;
@@ -35,7 +50,7 @@ struct DXVAData
     UINT picHeight;
     UINT isShortFormat;
     UINT dxvaBufNum;
-    DXVADecBuf dxvaDecBuffers[10];
-} ;
+    DXVADecBuf dxvaDecBuffers[4];
+};
 
 extern DXVAData decDataHevc;
