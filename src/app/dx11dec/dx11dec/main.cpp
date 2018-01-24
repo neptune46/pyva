@@ -6,13 +6,13 @@
 
 int main(char argc, char** argv)
 {
-    DXVAData dxvaDecData = g_dxvaDataHEVC_Short;
+    DXVAData* dxvaDecData = &g_dxvaDataHEVC_Short;
 
     HRESULT hr = S_OK;
     ID3D11Device *pD3D11Device = NULL;
     ID3D11DeviceContext *pDeviceContext = NULL;
     D3D_FEATURE_LEVEL fl;
-    GUID profile = dxvaDecData.guidDecoder;
+    GUID profile = dxvaDecData->guidDecoder;
 
     UINT profileCount = 0;
     GUID decoderGUID = {};
@@ -29,8 +29,8 @@ int main(char argc, char** argv)
     if (SUCCEEDED(hr))
     {
         D3D11_TEXTURE2D_DESC descRT = { 0 };
-        descRT.Width = dxvaDecData.picWidth;
-        descRT.Height = dxvaDecData.picHeight;
+        descRT.Width = dxvaDecData->picWidth;
+        descRT.Height = dxvaDecData->picHeight;
         descRT.MipLevels = 1;
         descRT.ArraySize = 1;
         descRT.Format = DXGI_FORMAT_NV12;
@@ -45,8 +45,8 @@ int main(char argc, char** argv)
     if (SUCCEEDED(hr))
     {
         D3D11_TEXTURE2D_DESC descRT = { 0 };
-        descRT.Width = dxvaDecData.picWidth;
-        descRT.Height = dxvaDecData.picHeight;
+        descRT.Width = dxvaDecData->picWidth;
+        descRT.Height = dxvaDecData->picHeight;
         descRT.MipLevels = 1;
         descRT.ArraySize = 1;
         descRT.Format = DXGI_FORMAT_NV12;
@@ -67,11 +67,11 @@ int main(char argc, char** argv)
     {
         D3D11_VIDEO_DECODER_DESC desc = { 0 };
         desc.Guid = profile;
-        desc.SampleWidth = dxvaDecData.picWidth;
-        desc.SampleHeight = dxvaDecData.picHeight;
+        desc.SampleWidth = dxvaDecData->picWidth;
+        desc.SampleHeight = dxvaDecData->picHeight;
         desc.OutputFormat = DXGI_FORMAT_NV12;
         D3D11_VIDEO_DECODER_CONFIG config = { 0 };
-        config.ConfigBitstreamRaw = dxvaDecData.isShortFormat; // 0: long format; 1: short format
+        config.ConfigBitstreamRaw = dxvaDecData->isShortFormat; // 0: long format; 1: short format
         hr = pD3D11VideoDevice->CreateVideoDecoder(&desc, &config, &pVideoDecoder);
     }
 
@@ -113,28 +113,28 @@ int main(char argc, char** argv)
 
     if (SUCCEEDED(hr))
     {
-        UINT sizeDesc = sizeof(D3D11_VIDEO_DECODER_BUFFER_DESC) * dxvaDecData.dxvaBufNum;
-        D3D11_VIDEO_DECODER_BUFFER_DESC *descDecBuffers = new D3D11_VIDEO_DECODER_BUFFER_DESC[dxvaDecData.dxvaBufNum];
+        UINT sizeDesc = sizeof(D3D11_VIDEO_DECODER_BUFFER_DESC) * dxvaDecData->dxvaBufNum;
+        D3D11_VIDEO_DECODER_BUFFER_DESC *descDecBuffers = new D3D11_VIDEO_DECODER_BUFFER_DESC[dxvaDecData->dxvaBufNum];
         memset(descDecBuffers, 0, sizeDesc);
 
-        for (UINT i = 0; i < dxvaDecData.dxvaBufNum; i++)
+        for (UINT i = 0; i < dxvaDecData->dxvaBufNum; i++)
         {
             BYTE* buffer = 0;
             UINT bufferSize = 0;
             descDecBuffers[i].BufferIndex = i;
-            descDecBuffers[i].BufferType = dxvaDecData.dxvaDecBuffers[i].bufType;
-            descDecBuffers[i].DataSize = dxvaDecData.dxvaDecBuffers[i].bufSize;
+            descDecBuffers[i].BufferType = dxvaDecData->dxvaDecBuffers[i].bufType;
+            descDecBuffers[i].DataSize = dxvaDecData->dxvaDecBuffers[i].bufSize;
 
             hr = pVideoContext->GetDecoderBuffer(pVideoDecoder, descDecBuffers[i].BufferType, &bufferSize, reinterpret_cast<void**>(&buffer));
             if (SUCCEEDED(hr))
             {
                 UINT copySize = min(bufferSize, descDecBuffers[i].DataSize);
-                memcpy_s(buffer, copySize, dxvaDecData.dxvaDecBuffers[i].pBufData, copySize);
+                memcpy_s(buffer, copySize, dxvaDecData->dxvaDecBuffers[i].pBufData, copySize);
                 hr = pVideoContext->ReleaseDecoderBuffer(pVideoDecoder, descDecBuffers[i].BufferType);
             }
         }
 
-        hr = pVideoContext->SubmitDecoderBuffers(pVideoDecoder, dxvaDecData.dxvaBufNum, descDecBuffers);
+        hr = pVideoContext->SubmitDecoderBuffers(pVideoDecoder, dxvaDecData->dxvaBufNum, descDecBuffers);
         delete[] descDecBuffers;
     }
 
@@ -147,9 +147,9 @@ int main(char argc, char** argv)
     {
         D3D11_BOX box;
         box.left = 0,
-            box.right = dxvaDecData.picWidth,
+            box.right = dxvaDecData->picWidth,
             box.top = 0,
-            box.bottom = dxvaDecData.picHeight,
+            box.bottom = dxvaDecData->picHeight,
             box.front = 0,
             box.back = 1;
         pDeviceContext->CopySubresourceRegion(pSurfaceCopyStaging, 0, 0, 0, 0, pSurfaceDecodeNV12, 0, &box);
@@ -159,7 +159,7 @@ int main(char argc, char** argv)
 
         if (SUCCEEDED(hr))
         {
-            UINT height = dxvaDecData.picHeight;
+            UINT height = dxvaDecData->picHeight;
             BYTE *pData = (BYTE*)malloc(subRes.RowPitch * (height + height / 2));
             if (pData)
             {
