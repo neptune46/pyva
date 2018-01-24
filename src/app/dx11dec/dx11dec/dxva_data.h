@@ -53,4 +53,5 @@ struct DXVAData
     DXVADecBuf dxvaDecBuffers[4];
 };
 
+extern DXVAData decDataAvc;
 extern DXVAData decDataHevc;
