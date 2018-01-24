@@ -6,7 +6,7 @@
 
 int main(char argc, char** argv)
 {
-    DXVAData* dxvaDecData = &g_dxvaDataHEVC_Short;
+    DXVAData* dxvaDecData = &decDataHevc;
 
     HRESULT hr = S_OK;
     ID3D11Device *pD3D11Device = NULL;
