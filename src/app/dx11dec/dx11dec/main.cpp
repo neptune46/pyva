@@ -124,6 +124,7 @@ int main(char argc, char** argv)
             descDecBuffers[i].BufferIndex = i;
             descDecBuffers[i].BufferType = dxvaDecData->dxvaDecBuffers[i].bufType;
             descDecBuffers[i].DataSize = dxvaDecData->dxvaDecBuffers[i].bufSize;
+            descDecBuffers[i].NumMBsInBuffer = dxvaDecData->mbCount;
 
             hr = pVideoContext->GetDecoderBuffer(pVideoDecoder, descDecBuffers[i].BufferType, &bufferSize, reinterpret_cast<void**>(&buffer));
             if (SUCCEEDED(hr))

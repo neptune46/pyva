@@ -452,6 +452,7 @@ DXVAData decDataHevc = {
     DXVA_ModeHEVC_VLD_Main,
     hevcBufs.width,
     hevcBufs.height,
+    300,
     1, // Short format for MSFT standard GUID
     3, // the hard code HEVC frame doesn't need specified QMatrix
     {
@@ -2681,13 +2682,14 @@ DXVAData decDataAvc = {
     DXVA2_ModeH264_VLD_NoFGT,
     avcBufs.width,
     avcBufs.height,
+    690,
     1, // Short format for MSFT standard GUID
     4, 
     {
         { D3D11_VIDEO_DECODER_BUFFER_PICTURE_PARAMETERS, &avcBufs.pic[0], avcBufs.pic.size() },
-        { D3D11_VIDEO_DECODER_BUFFER_SLICE_CONTROL, &avcBufs.slc[0], avcBufs.slc.size() },
-        { D3D11_VIDEO_DECODER_BUFFER_BITSTREAM, &avcBufs.qm[0], avcBufs.qm.size() },
-        { D3D11_VIDEO_DECODER_BUFFER_BITSTREAM, &avcBufs.bs[0], avcBufs.bs.size() }
+        { D3D11_VIDEO_DECODER_BUFFER_INVERSE_QUANTIZATION_MATRIX, &avcBufs.qm[0], avcBufs.qm.size() },
+        { D3D11_VIDEO_DECODER_BUFFER_BITSTREAM, &avcBufs.bs[0], avcBufs.bs.size() },
+        { D3D11_VIDEO_DECODER_BUFFER_SLICE_CONTROL, &avcBufs.slc[0], avcBufs.slc.size() }
     }
 };
 

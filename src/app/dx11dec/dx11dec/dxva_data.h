@@ -48,6 +48,7 @@ struct DXVAData
     GUID guidDecoder;
     UINT picWidth;
     UINT picHeight;
+    UINT mbCount;
     UINT isShortFormat;
     UINT dxvaBufNum;
     DXVADecBuf dxvaDecBuffers[4];
