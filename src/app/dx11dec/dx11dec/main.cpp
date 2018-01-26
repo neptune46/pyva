@@ -44,22 +44,6 @@ int main(char argc, char** argv)
 
     if (SUCCEEDED(hr))
     {
-        D3D11_TEXTURE2D_DESC descRT = { 0 };
-        descRT.Width = dxvaDecData->picWidth;
-        descRT.Height = dxvaDecData->picHeight;
-        descRT.MipLevels = 1;
-        descRT.ArraySize = 1;
-        descRT.Format = DXGI_FORMAT_NV12;
-        descRT.SampleDesc = { 1, 0 }; // DXGI_SAMPLE_DESC 
-        descRT.Usage = D3D11_USAGE_STAGING; // D3D11_USAGE 
-        descRT.BindFlags = 0;
-        descRT.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-        descRT.MiscFlags = 0;
-        hr = pD3D11Device->CreateTexture2D(&descRT, NULL, &pSurfaceCopyStaging);
-    }
-
-    if (SUCCEEDED(hr))
-    {
         hr = pD3D11Device->QueryInterface(&pD3D11VideoDevice);
     }
 
@@ -146,6 +130,22 @@ int main(char argc, char** argv)
 
     if (SUCCEEDED(hr))
     {
+        D3D11_TEXTURE2D_DESC descRT = { 0 };
+        descRT.Width = dxvaDecData->picWidth;
+        descRT.Height = dxvaDecData->picHeight;
+        descRT.MipLevels = 1;
+        descRT.ArraySize = 1;
+        descRT.Format = DXGI_FORMAT_NV12;
+        descRT.SampleDesc = { 1, 0 }; // DXGI_SAMPLE_DESC 
+        descRT.Usage = D3D11_USAGE_STAGING; // D3D11_USAGE 
+        descRT.BindFlags = 0;
+        descRT.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+        descRT.MiscFlags = 0;
+        hr = pD3D11Device->CreateTexture2D(&descRT, NULL, &pSurfaceCopyStaging);
+    }
+
+    if (SUCCEEDED(hr))
+    {
         D3D11_BOX box;
         box.left = 0,
             box.right = dxvaDecData->picWidth,
@@ -153,9 +153,8 @@ int main(char argc, char** argv)
             box.bottom = dxvaDecData->picHeight,
             box.front = 0,
             box.back = 1;
-        pDeviceContext->CopySubresourceRegion(pSurfaceCopyStaging, 0, 0, 0, 0, pSurfaceDecodeNV12, 0, &box);
-        D3D11_MAPPED_SUBRESOURCE subRes;
-        ZeroMemory(&subRes, sizeof(subRes));
+        pDeviceContext->CopySubresourceRegion(pSurfaceCopyStaging, 0, 0, 0, 0, pSurfaceDecodeNV12, 0, nullptr);
+        D3D11_MAPPED_SUBRESOURCE subRes = {};
         hr = pDeviceContext->Map(pSurfaceCopyStaging, 0, D3D11_MAP_READ, 0, &subRes);
 
         if (SUCCEEDED(hr))
