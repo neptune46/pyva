@@ -1,4 +1,4 @@
-#pragma  once
+#pragma once
 
 #include <stdio.h>
 #include <stdint.h>
@@ -15,8 +15,8 @@
 struct DXVADecBuf
 {
     D3D11_VIDEO_DECODER_BUFFER_TYPE bufType;
-    uint8_t* pBufData;
-    UINT bufSize;
+    uint8_t *pBufData;
+    uint32_t bufSize;
 };
 
 struct AvcDxvaBufs
@@ -46,11 +46,11 @@ struct HevcDxvaBufs
 struct DXVAData
 {
     GUID guidDecoder;
-    UINT picWidth;
-    UINT picHeight;
-    UINT mbCount;
-    UINT isShortFormat;
-    UINT dxvaBufNum;
+    uint32_t picWidth;
+    uint32_t picHeight;
+    uint32_t mbCount;
+    uint32_t isShortFormat;
+    uint32_t dxvaBufNum;
     DXVADecBuf dxvaDecBuffers[4];
 };
 
