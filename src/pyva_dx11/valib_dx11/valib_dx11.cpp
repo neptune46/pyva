@@ -23,6 +23,8 @@ public:
     HRESULT init();
     void free();
 
+    uint32_t getVideoDecoderProfileCount();
+
 private:
     ID3D11Device* d3d11Device_ = nullptr;
     ID3D11DeviceContext* d3d11DeviceCtx_ = nullptr;
@@ -59,6 +61,18 @@ void VideoDecoder::free()
     FREE_RESOURCE(d3d11VideoContext_);
 }
 
+uint32_t VideoDecoder::getVideoDecoderProfileCount()
+{
+    uint32_t profileCount = 0;
+
+    if (d3d11VideoDevice_)
+    {
+        profileCount = d3d11VideoDevice_->GetVideoDecoderProfileCount();
+    }
+
+    return profileCount;
+}
+
 VideoDecoder decoderObj;
 
 PyObject *init(PyObject *)
@@ -75,11 +89,18 @@ PyObject *deinit(PyObject *)
     return PyLong_FromLong(0);
 }
 
+PyObject *decoderProfileCount(PyObject *)
+{
+    uint32_t count = decoderObj.getVideoDecoderProfileCount();
+    return PyLong_FromLong(count);
+}
+
 static PyMethodDef pyva_methods[] = {
     // The first property is the name exposed to Python, the second is the C++
     // function name that contains the implementation.
     { "init", (PyCFunction)init, METH_NOARGS, nullptr },
     { "free", (PyCFunction)deinit, METH_NOARGS, nullptr },
+    { "getDecoderProfileCount", (PyCFunction)decoderProfileCount, METH_NOARGS, nullptr },
 
     // Terminate the array with an object containing nulls.
     { nullptr, nullptr, 0, nullptr }
