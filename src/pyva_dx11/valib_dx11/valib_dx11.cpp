@@ -20,49 +20,66 @@ public:
     VideoDecoder() {};
     ~VideoDecoder() {};
 
-    HRESULT createDevcice();
-    void destroyDevice();
+    HRESULT init();
+    void free();
 
 private:
     ID3D11Device* d3d11Device_ = nullptr;
     ID3D11DeviceContext* d3d11DeviceCtx_ = nullptr;
+    ID3D11VideoDevice* d3d11VideoDevice_ = nullptr;
+    ID3D11VideoContext *d3d11VideoContext_ = nullptr;
 };
 
-HRESULT VideoDecoder::createDevcice()
+HRESULT VideoDecoder::init()
 {
+    HRESULT hr = S_OK;
+
     D3D_FEATURE_LEVEL fl;
-    HRESULT hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0,
+    hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0,
         D3D11_SDK_VERSION, &d3d11Device_, &fl, &d3d11DeviceCtx_);
+
+    if (SUCCEEDED(hr))
+    {
+        hr = d3d11Device_->QueryInterface(&d3d11VideoDevice_);
+    }
+
+    if (SUCCEEDED(hr))
+    {
+        hr = d3d11DeviceCtx_->QueryInterface(&d3d11VideoContext_);
+    }
+
     return hr;
 }
 
-void VideoDecoder::destroyDevice()
+void VideoDecoder::free()
 {
     FREE_RESOURCE(d3d11Device_);
     FREE_RESOURCE(d3d11DeviceCtx_);
+    FREE_RESOURCE(d3d11VideoDevice_);
+    FREE_RESOURCE(d3d11VideoContext_);
 }
 
 VideoDecoder decoderObj;
 
-PyObject *createDeviceD3d11(PyObject *)
+PyObject *init(PyObject *)
 {
-    HRESULT hr = decoderObj.createDevcice();
+    HRESULT hr = decoderObj.init();
     int32_t ret = (hr == S_OK) ? 0 : 1;
 
     return PyLong_FromLong(ret);
 }
 
-PyObject *destroyDeviceD3d11(PyObject *)
+PyObject *deinit(PyObject *)
 {
-    decoderObj.destroyDevice();
+    decoderObj.free();
     return PyLong_FromLong(0);
 }
 
 static PyMethodDef pyva_methods[] = {
     // The first property is the name exposed to Python, the second is the C++
     // function name that contains the implementation.
-    { "createdevice", (PyCFunction)createDeviceD3d11, METH_NOARGS, nullptr },
-    { "destroydevice", (PyCFunction)destroyDeviceD3d11, METH_NOARGS, nullptr },
+    { "init", (PyCFunction)init, METH_NOARGS, nullptr },
+    { "free", (PyCFunction)deinit, METH_NOARGS, nullptr },
 
     // Terminate the array with an object containing nulls.
     { nullptr, nullptr, 0, nullptr }

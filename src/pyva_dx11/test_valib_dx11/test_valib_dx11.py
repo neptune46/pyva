@@ -1,7 +1,7 @@
 
 import pyva
 
-a = pyva.createdevice()
-pyva.destroydevice()
+a = pyva.init()
+pyva.free()
 
 print(a)
