@@ -1,6 +1,7 @@
 
-from pyva import createdevice
+import pyva
 
-a = createdevice()
+a = pyva.createdevice()
+pyva.destroydevice()
 
 print(a)
