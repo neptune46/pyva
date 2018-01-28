@@ -32,6 +32,16 @@ int main(char argc, char **argv)
 
     if (SUCCEEDED(hr))
     {
+        hr = pD3D11Device->QueryInterface(&pD3D11VideoDevice);
+    }
+
+    if (SUCCEEDED(hr))
+    {
+        hr = pDeviceContext->QueryInterface(&pVideoContext);
+    }
+
+    if (SUCCEEDED(hr))
+    {
         D3D11_TEXTURE2D_DESC descRT = {0};
         descRT.Width = dxvaDecData->picWidth;
         descRT.Height = dxvaDecData->picHeight;
@@ -44,11 +54,6 @@ int main(char argc, char **argv)
         descRT.CPUAccessFlags = 0;
         descRT.MiscFlags = 0;
         hr = pD3D11Device->CreateTexture2D(&descRT, NULL, &pSurfaceDecodeNV12);
-    }
-
-    if (SUCCEEDED(hr))
-    {
-        hr = pD3D11Device->QueryInterface(&pD3D11VideoDevice);
     }
 
     if (SUCCEEDED(hr))
@@ -87,11 +92,6 @@ int main(char argc, char **argv)
                 //printf("INFO: Index %02d - GUID = %s\n", i, getGUIDName(decoderGUID).c_str());
             }
         }
-    }
-
-    if (SUCCEEDED(hr))
-    {
-        hr = pDeviceContext->QueryInterface(&pVideoContext);
     }
 
     if (SUCCEEDED(hr))
