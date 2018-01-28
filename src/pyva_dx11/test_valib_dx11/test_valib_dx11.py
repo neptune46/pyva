@@ -1,8 +1,13 @@
 
 import pyva
 
-a = pyva.init()
-b = pyva.getDecoderProfileCount()
-pyva.free()
+guids = []
+ret = pyva.init()
+if ret == 0:
+    num = pyva.getDecoderProfileCount()
+    for i in range(num):
+        guids.append (pyva.getDecoderProfile(i))
+    pyva.free()
 
-print(a)
+for guid in guids:
+    print(guid)

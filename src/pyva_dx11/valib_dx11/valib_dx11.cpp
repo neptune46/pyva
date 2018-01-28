@@ -24,6 +24,7 @@ public:
     void free();
 
     uint32_t getVideoDecoderProfileCount();
+    HRESULT getVideoDecoderProfile(uint32_t index, GUID* guid);
 
 private:
     ID3D11Device* d3d11Device_ = nullptr;
@@ -73,6 +74,12 @@ uint32_t VideoDecoder::getVideoDecoderProfileCount()
     return profileCount;
 }
 
+HRESULT VideoDecoder::getVideoDecoderProfile(uint32_t index, GUID* guid)
+{
+    HRESULT hr = d3d11VideoDevice_->GetVideoDecoderProfile(index, guid);
+    return hr;
+}
+
 VideoDecoder decoderObj;
 
 PyObject *init(PyObject *)
@@ -95,12 +102,24 @@ PyObject *decoderProfileCount(PyObject *)
     return PyLong_FromLong(count);
 }
 
+PyObject *decoderProfile(PyObject *, PyObject* o)
+{
+    char strGuid[64];
+    GUID guid = {};
+    uint32_t index = PyLong_AsLong(o);
+    HRESULT hr = decoderObj.getVideoDecoderProfile(index, &guid);
+    sprintf_s(strGuid, 64, "%08x%04x%04x%02x%02x%02x%02x%02x%02x%02x%02x", guid.Data1, guid.Data2, guid.Data3, 
+        guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
+    return PyByteArray_FromStringAndSize(strGuid, strlen(strGuid));
+}
+
 static PyMethodDef pyva_methods[] = {
     // The first property is the name exposed to Python, the second is the C++
     // function name that contains the implementation.
     { "init", (PyCFunction)init, METH_NOARGS, nullptr },
     { "free", (PyCFunction)deinit, METH_NOARGS, nullptr },
     { "getDecoderProfileCount", (PyCFunction)decoderProfileCount, METH_NOARGS, nullptr },
+    { "getDecoderProfile", (PyCFunction)decoderProfile, METH_O, nullptr },
 
     // Terminate the array with an object containing nulls.
     { nullptr, nullptr, 0, nullptr }
