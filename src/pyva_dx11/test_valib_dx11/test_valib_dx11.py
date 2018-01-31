@@ -2,52 +2,63 @@
 import uuid
 import pyva
 
-guidmap = [
-    ("D3D11_DECODER_PROFILE_WMV9_POSTPROC",                                    uuid.UUID(fields=(0x1b81be90, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
-    ("D3D11_DECODER_PROFILE_WMV9_MOCOMP",                                      uuid.UUID(fields=(0x1b81be91, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
-    ("D3D11_DECODER_PROFILE_WMV9_IDCT",                                        uuid.UUID(fields=(0x1b81be94, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
-    ("D3D11_DECODER_PROFILE_VC1_POSTPROC",                                     uuid.UUID(fields=(0x1b81beA0, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
-    ("D3D11_DECODER_PROFILE_VC1_MOCOMP",                                       uuid.UUID(fields=(0x1b81beA1, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
-    ("D3D11_DECODER_PROFILE_VC1_IDCT",                                         uuid.UUID(fields=(0x1b81beA2, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
-    ("D3D11_DECODER_PROFILE_VC1_VLD",                                          uuid.UUID(fields=(0x1b81beA3, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
-    ("D3D11_DECODER_PROFILE_VC1_D2010",                                        uuid.UUID(fields=(0x1b81beA4, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
-    ("D3D11_DECODER_PROFILE_MPEG4PT2_VLD_SIMPLE",                              uuid.UUID(fields=(0xefd64d74, 0xc9e8, 0x41d7, 0xa5, 0xe9, 0xe9b0e39fa319))),
-    ("D3D11_DECODER_PROFILE_MPEG4PT2_VLD_ADVSIMPLE_NOGMC",                     uuid.UUID(fields=(0xed418a9f, 0x010d, 0x4eda, 0x9a, 0xe3, 0x9a65358d8d2e))),
-    ("D3D11_DECODER_PROFILE_MPEG4PT2_VLD_ADVSIMPLE_GMC",                       uuid.UUID(fields=(0xab998b5b, 0x4258, 0x44a9, 0x9f, 0xeb, 0x94e597a6baae))),
-    ("D3D11_DECODER_PROFILE_HEVC_VLD_MAIN",                                    uuid.UUID(fields=(0x5b11d51b, 0x2f4c, 0x4452, 0xbc, 0xc3, 0x09f2a1160cc0))),
-    ("D3D11_DECODER_PROFILE_HEVC_VLD_MAIN10",                                  uuid.UUID(fields=(0x107af0e0, 0xef1a, 0x4d19, 0xab, 0xa8, 0x67a163073d13))),
-    ("D3D11_DECODER_PROFILE_VP9_VLD_PROFILE0",                                 uuid.UUID(fields=(0x463707f8, 0xa1d0, 0x4585, 0x87, 0x6d, 0x83aa6d60b89e))),
-    ("D3D11_DECODER_PROFILE_VP9_VLD_10BIT_PROFILE2",                           uuid.UUID(fields=(0xa4c749ef, 0x6ecf, 0x48aa, 0x84, 0x48, 0x50a7a1165ff7))),
-    ("D3D11_DECODER_PROFILE_VP8_VLD",                                          uuid.UUID(fields=(0x90b899ea, 0x3a62, 0x4705, 0x88, 0xb3, 0x8df04b2744e7))),
-    ("D3D11_CRYPTO_TYPE_AES128_CTR",                                           uuid.UUID(fields=(0x9b6bd711, 0x4f74, 0x41c9, 0x9e, 0x7b, 0x0be2d7d93b4f))),
-    ("D3D11_DECODER_ENCRYPTION_HW_CENC",                                       uuid.UUID(fields=(0x89d6ac4f, 0x09f2, 0x4229, 0xb2, 0xcd, 0x37740a6dfd81))),
-    ("D3D11_KEY_EXCHANGE_HW_PROTECTION",                                       uuid.UUID(fields=(0xb1170d8a, 0x628d, 0x4da3, 0xad, 0x3b, 0x82ddb08b4970))),
-    ("D3D11_AUTHENTICATED_QUERY_PROTECTION",                                   uuid.UUID(fields=(0xa84eb584, 0xc495, 0x48aa, 0xb9, 0x4d, 0x8bd2d6fbce05))),
-    ("D3D11_AUTHENTICATED_QUERY_CHANNEL_TYPE",                                 uuid.UUID(fields=(0xbc1b18a5, 0xb1fb, 0x42ab, 0xbd, 0x94, 0xb5828b4bf7be))),
-    ("D3D11_AUTHENTICATED_QUERY_DEVICE_HANDLE",                                uuid.UUID(fields=(0xec1c539d, 0x8cff, 0x4e2a, 0xbc, 0xc4, 0xf5692f99f480))),
-    ("D3D11_AUTHENTICATED_QUERY_CRYPTO_SESSION",                               uuid.UUID(fields=(0x2634499e, 0xd018, 0x4d74, 0xac, 0x17, 0x7f724059528d))),
-    ("D3D11_AUTHENTICATED_QUERY_RESTRICTED_SHARED_RESOURCE_PROCESS_COUNT",     uuid.UUID(fields=(0x0db207b3, 0x9450, 0x46a6, 0x82, 0xde, 0x1b96d44f9cf2))),
-    ("D3D11_AUTHENTICATED_QUERY_RESTRICTED_SHARED_RESOURCE_PROCESS",           uuid.UUID(fields=(0x649bbadb, 0xf0f4, 0x4639, 0xa1, 0x5b, 0x24393fc3abac))),
-    ("D3D11_AUTHENTICATED_QUERY_UNRESTRICTED_PROTECTED_SHARED_RESOURCE_COUNT", uuid.UUID(fields=(0x012f0bd6, 0xe662, 0x4474, 0xbe, 0xfd, 0xaa53e5143c6d))),
-    ("D3D11_AUTHENTICATED_QUERY_OUTPUT_ID_COUNT",                              uuid.UUID(fields=(0x2c042b5e, 0x8c07, 0x46d5, 0xaa, 0xbe, 0x8f75cbad4c31))),
-    ("D3D11_AUTHENTICATED_QUERY_OUTPUT_ID",                                    uuid.UUID(fields=(0x839ddca3, 0x9b4e, 0x41e4, 0xb0, 0x53, 0x892bd2a11ee7))),
-    ("D3D11_AUTHENTICATED_QUERY_ACCESSIBILITY_ATTRIBUTES",                     uuid.UUID(fields=(0x6214d9d2, 0x432c, 0x4abb, 0x9f, 0xce, 0x216eea269e3b))),
-    ("D3D11_AUTHENTICATED_QUERY_ENCRYPTION_WHEN_ACCESSIBLE_GUID_COUNT",        uuid.UUID(fields=(0xb30f7066, 0x203c, 0x4b07, 0x93, 0xfc, 0xceaafd61241e))),
-    ("D3D11_AUTHENTICATED_QUERY_ENCRYPTION_WHEN_ACCESSIBLE_GUID",              uuid.UUID(fields=(0xf83a5958, 0xe986, 0x4bda, 0xbe, 0xb0, 0x411f6a7a01b7))),
-    ("D3D11_AUTHENTICATED_QUERY_CURRENT_ENCRYPTION_WHEN_ACCESSIBLE",           uuid.UUID(fields=(0xec1791c7, 0xdad3, 0x4f15, 0x9e, 0xc3, 0xfaa93d60d4f0))),
-    ("D3D11_AUTHENTICATED_CONFIGURE_INITIALIZE",                               uuid.UUID(fields=(0x06114bdb, 0x3523, 0x470a, 0x8d, 0xca, 0xfbc2845154f0))),
-    ("D3D11_AUTHENTICATED_CONFIGURE_PROTECTION",                               uuid.UUID(fields=(0x50455658, 0x3f47, 0x4362, 0xbf, 0x99, 0xbfdfcde9ed29))),
-    ("D3D11_AUTHENTICATED_CONFIGURE_CRYPTO_SESSION",                           uuid.UUID(fields=(0x6346cc54, 0x2cfc, 0x4ad4, 0x82, 0x24, 0xd15837de7700))),
-    ("D3D11_AUTHENTICATED_CONFIGURE_SHARED_RESOURCE",                          uuid.UUID(fields=(0x0772d047, 0x1b40, 0x48e8, 0x9c, 0xa6, 0xb5f510de9f01))),
-    ("D3D11_AUTHENTICATED_CONFIGURE_ENCRYPTION_WHEN_ACCESSIBLE",               uuid.UUID(fields=(0x41fff286, 0x6ae0, 0x4d43, 0x9d, 0x55, 0xa46e9efd158a))),
-    ("D3D11_KEY_EXCHANGE_RSAES_OAEP",                                          uuid.UUID(fields=(0xc1949895, 0xd72a, 0x4a1d, 0x8e, 0x5d, 0xed857d171520))),
+guidList = [
+    ("DXVA2_ModeMPEG2_MoComp",  uuid.UUID('{e6a9f44b-61b0-4563-9ea4-63d2a3c6fe66}')),
+    ("DXVA2_ModeMPEG2_IDCT",  uuid.UUID('{bf22ad00-03ea-4690-8077-473346209b7e}')),
+    ("DXVA2_ModeMPEG2_VLD",  uuid.UUID('{ee27417f-5e28-4e65-beea-1d26b508adc9}')),
+    ("DXVA2_ModeMPEG1_VLD",  uuid.UUID('{6f3ec719-3735-42cc-8063-65cc3cb36616}')),
+    ("DXVA2_ModeMPEG2and1_VLD",  uuid.UUID('{86695f12-340e-4f04-9fd3-9253dd327460}')),
+    ("DXVA2_ModeH264_A",  uuid.UUID('{1b81be64-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_MoComp_NoFGT",  uuid.UUID('{1b81be64-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_B",  uuid.UUID('{1b81be65-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_MoComp_FGT",  uuid.UUID('{1b81be65-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_C",  uuid.UUID('{1b81be66-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_IDCT_NoFGT",  uuid.UUID('{1b81be66-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_D",  uuid.UUID('{1b81be67-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_IDCT_FGT",  uuid.UUID('{1b81be67-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_E",  uuid.UUID('{1b81be68-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_VLD_NoFGT",  uuid.UUID('{1b81be68-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_F",  uuid.UUID('{1b81be69-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_VLD_FGT",  uuid.UUID('{1b81be69-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeH264_VLD_WithFMOASO_NoFGT",  uuid.UUID('{d5f04ff9-3418-45d8-9561-32a76aae2ddd}')),
+    ("DXVA2_ModeH264_VLD_Stereo_Progressive_NoFGT",  uuid.UUID('{d79be8da-0cf1-4c81-b82a-69a4e236f43d}')),
+    ("DXVA2_ModeH264_VLD_Stereo_NoFGT",  uuid.UUID('{f9aaccbb-c2b6-4cfc-8779-5707b1760552}')),
+    ("DXVA2_ModeH264_VLD_Multiview_NoFGT",  uuid.UUID('{705b9d82-76cf-49d6-b7e6-ac8872db013c}')),
+    ("DXVA2_ModeWMV8_A",  uuid.UUID('{1b81be80-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeWMV8_PostProc",  uuid.UUID('{1b81be80-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeWMV8_B",  uuid.UUID('{1b81be81-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeWMV8_MoComp",  uuid.UUID('{1b81be81-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeWMV9_A",  uuid.UUID('{1b81be90-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeWMV9_PostProc",  uuid.UUID('{1b81be90-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeWMV9_B",  uuid.UUID('{1b81be91-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeWMV9_MoComp",  uuid.UUID('{1b81be91-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeWMV9_C",  uuid.UUID('{1b81be94-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeWMV9_IDCT",  uuid.UUID('{1b81be94-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeVC1_A",  uuid.UUID('{1b81beA0-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeVC1_PostProc",  uuid.UUID('{1b81beA0-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeVC1_B",  uuid.UUID('{1b81beA1-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeVC1_MoComp",  uuid.UUID('{1b81beA1-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeVC1_C",  uuid.UUID('{1b81beA2-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeVC1_IDCT",  uuid.UUID('{1b81beA2-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeVC1_D",  uuid.UUID('{1b81beA3-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeVC1_VLD",  uuid.UUID('{1b81beA3-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_ModeVC1_D2010",  uuid.UUID('{1b81beA4-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_NoEncrypt",  uuid.UUID('{1b81beD0-a0c7-11d3-b984-00c04f2e73c5}')),
+    ("DXVA2_VideoProcProgressiveDevice",  uuid.UUID('{5a54a0c9-c7ec-4bd9-8ede-f3c75dc4393b}')),
+    ("DXVA2_VideoProcBobDevice",  uuid.UUID('{335aa36e-7884-43a4-9c91-7f87faf3e37e}')),
+    ("DXVA2_VideoProcSoftwareDevice",  uuid.UUID('{4553d47f-ee7e-4e3f-9475-dbf1376c4810}')),
+    ("DXVA2_ModeMPEG4pt2_VLD_Simple",  uuid.UUID('{efd64d74-c9e8-41d7-a5e9-e9b0e39fa319}')),
+    ("DXVA2_ModeMPEG4pt2_VLD_AdvSimple_NoGMC",  uuid.UUID('{ed418a9f-010d-4eda-9ae3-9a65358d8d2e}')),
+    ("DXVA2_ModeMPEG4pt2_VLD_AdvSimple_GMC",  uuid.UUID('{ab998b5b-4258-44a9-9feb-94e597a6baae}')),
+    ("DXVA2_ModeHEVC_VLD_Main",  uuid.UUID('{5b11d51b-2f4c-4452-bcc3-09f2a1160cc0}')),
+    ("DXVA2_ModeHEVC_VLD_Main10",  uuid.UUID('{107af0e0-ef1a-4d19-aba8-67a163073d13}')),
 ]
 
 def getGuidName(x):
     name = ""
-    for g in guidmap:
+    for g in guidList:
         if (x.int == g[1].int):
-            name = guidmap[i][0]
+            name = g[0]
     if name == "":
         name = str(x)
     return name
@@ -61,6 +72,7 @@ if ret == 0:
     pyva.free()
 
 for guid in guids:
+    #print(guid)
     print(getGuidName(guid))
 
 print("finish")
