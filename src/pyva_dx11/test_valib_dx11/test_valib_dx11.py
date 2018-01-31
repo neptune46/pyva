@@ -2,8 +2,6 @@
 import uuid
 import pyva
 
-n= uuid.UUID(fields=(0x12345678, 0x1234, 0x5678, 0x12, 0x34, 0x567812345678))
-
 guidmap = [
     ("D3D11_DECODER_PROFILE_WMV9_POSTPROC",                                    uuid.UUID(fields=(0x1b81be90, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
     ("D3D11_DECODER_PROFILE_WMV9_MOCOMP",                                      uuid.UUID(fields=(0x1b81be91, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00c04f2e73c5))),
@@ -47,9 +45,8 @@ guidmap = [
 
 def getGuidName(x):
     name = ""
-    a = uuid.UUID('{00010203-0405-0607-0809-0a0b0c0d0e0f}')
-    for i in range(guidmap.len()):
-        if (a == guidmap[i][1]):
+    for g in guidmap:
+        if (x.int == g[1].int):
             name = guidmap[i][0]
     if name == "":
         name = str(x)
@@ -60,7 +57,7 @@ ret = pyva.init()
 if ret == 0:
     num = pyva.getDecoderProfileCount()
     for i in range(num):
-        guids.append (pyva.getDecoderProfile(i))
+        guids.append(uuid.UUID(pyva.getDecoderProfile(i)))
     pyva.free()
 
 for guid in guids:

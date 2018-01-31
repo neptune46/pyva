@@ -104,13 +104,17 @@ PyObject *decoderProfileCount(PyObject *)
 
 PyObject *decoderProfile(PyObject *, PyObject* o)
 {
-    char strGuid[64];
     GUID guid = {};
     uint32_t index = PyLong_AsLong(o);
     HRESULT hr = decoderObj.getVideoDecoderProfile(index, &guid);
-    sprintf_s(strGuid, 64, "%08x%04x%04x%02x%02x%02x%02x%02x%02x%02x%02x", guid.Data1, guid.Data2, guid.Data3, 
+
+    //char strGuid[64];
+    //sprintf_s(strGuid, 64, "%08x%04x%04x%02x%02x%02x%02x%02x%02x%02x%02x", guid.Data1, guid.Data2, guid.Data3,
+    //    guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
+    //return PyByteArray_FromStringAndSize(strGuid, strlen(strGuid));
+
+    return PyUnicode_FromFormat("%08x%04x%04x%02x%02x%02x%02x%02x%02x%02x%02x", guid.Data1, guid.Data2, guid.Data3,
         guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
-    return PyByteArray_FromStringAndSize(strGuid, strlen(strGuid));
 }
 
 static PyMethodDef pyva_methods[] = {
