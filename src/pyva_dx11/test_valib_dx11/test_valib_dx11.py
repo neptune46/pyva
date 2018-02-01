@@ -63,16 +63,21 @@ def getGuidName(x):
         name = str(x)
     return name
 
-guids = []
-ret = pyva.init()
-if ret == 0:
-    num = pyva.getDecoderProfileCount()
-    for i in range(num):
-        guids.append(uuid.UUID(pyva.getDecoderProfile(i)))
-    pyva.free()
+def getProfile(profiles):
+    guids = []
+    ret = pyva.init()
+    if ret == 0:
+        num = pyva.getDecoderProfileCount()
+        for i in range(num):
+            guids.append(uuid.UUID(pyva.getDecoderProfile(i)))
+        pyva.free()
+    
+    for guid in guids:
+        profiles.append(getGuidName(guid))
 
-for guid in guids:
-    #print(guid)
-    print(getGuidName(guid))
+if __name__ == "__main__":
+    profiles = []
+    getProfile(profiles)
+    print(profiles)
 
 print("finish")
