@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <map>
+#include <string>
 
 #include <windows.h>
 #include <D3D11.h>
@@ -14,6 +16,30 @@
         res = nullptr;     \
     }
 
+struct GuidMap
+{
+    GuidMap()
+    {
+        codecToGuid["h264"] = { 0x1b81be68, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00, 0xc0, 0x4f, 0x2e, 0x73, 0xc5 };
+    }
+
+    GUID getGuid(std::string codecName) 
+    {
+        GUID guid = {};
+        std::map<std::string, GUID>::iterator it;
+
+        it = codecToGuid.find(codecName);
+        if (it != codecToGuid.end())
+            guid = codecToGuid[codecName];
+
+        return guid;
+    }
+
+    std::map<std::string, GUID> codecToGuid;
+
+} guidMap;
+
+
 class VideoDecoder
 {
 public:
@@ -26,11 +52,15 @@ public:
     uint32_t getVideoDecoderProfileCount();
     HRESULT getVideoDecoderProfile(uint32_t index, GUID* guid);
 
+    HRESULT createVideoDecoder(GUID profile, uint32_t width, uint32_t height, DXGI_FORMAT format = DXGI_FORMAT_NV12);
+
 private:
     ID3D11Device* d3d11Device_ = nullptr;
     ID3D11DeviceContext* d3d11DeviceCtx_ = nullptr;
     ID3D11VideoDevice* d3d11VideoDevice_ = nullptr;
     ID3D11VideoContext *d3d11VideoContext_ = nullptr;
+
+    ID3D11VideoDecoder *videoDecoder_ = nullptr;
 };
 
 HRESULT VideoDecoder::init()
@@ -76,8 +106,20 @@ uint32_t VideoDecoder::getVideoDecoderProfileCount()
 
 HRESULT VideoDecoder::getVideoDecoderProfile(uint32_t index, GUID* guid)
 {
-    HRESULT hr = d3d11VideoDevice_->GetVideoDecoderProfile(index, guid);
-    return hr;
+    return d3d11VideoDevice_->GetVideoDecoderProfile(index, guid);
+}
+
+HRESULT VideoDecoder::createVideoDecoder(GUID profile, uint32_t width, uint32_t height, DXGI_FORMAT format)
+{
+    D3D11_VIDEO_DECODER_DESC desc = { 0 };
+    desc.Guid = profile;
+    desc.SampleWidth = width;
+    desc.SampleHeight = height;
+    desc.OutputFormat = format;
+    D3D11_VIDEO_DECODER_CONFIG config = { 0 };
+    config.ConfigBitstreamRaw = 1; // 0: long format; 1: short format
+
+    return d3d11VideoDevice_->CreateVideoDecoder(&desc, &config, &videoDecoder_);
 }
 
 VideoDecoder decoderObj;
@@ -108,13 +150,20 @@ PyObject *decoderProfile(PyObject *, PyObject* o)
     uint32_t index = PyLong_AsLong(o);
     HRESULT hr = decoderObj.getVideoDecoderProfile(index, &guid);
 
-    //char strGuid[64];
-    //sprintf_s(strGuid, 64, "%08x%04x%04x%02x%02x%02x%02x%02x%02x%02x%02x", guid.Data1, guid.Data2, guid.Data3,
-    //    guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
-    //return PyByteArray_FromStringAndSize(strGuid, strlen(strGuid));
-
     return PyUnicode_FromFormat("%08x%04x%04x%02x%02x%02x%02x%02x%02x%02x%02x", guid.Data1, guid.Data2, guid.Data3,
         guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
+}
+
+PyObject *createVideoDecoder(PyObject *, PyObject* w, PyObject* h)
+{
+    std::string codecName = "h264"; // PyUnicode_AsUTF8(codec);
+    uint32_t width = 1920; // PyLong_AsLong(w);
+    uint32_t height = 1080; // PyLong_AsLong(h);
+    GUID profile = guidMap.getGuid(codecName);
+
+    HRESULT hr = decoderObj.createVideoDecoder(profile, width, height);
+    uint32_t ret = SUCCEEDED(hr) ? 0 : -1;
+    return PyLong_FromLong(ret);
 }
 
 static PyMethodDef pyva_methods[] = {
@@ -124,6 +173,7 @@ static PyMethodDef pyva_methods[] = {
     { "free", (PyCFunction)deinit, METH_NOARGS, nullptr },
     { "getDecoderProfileCount", (PyCFunction)decoderProfileCount, METH_NOARGS, nullptr },
     { "getDecoderProfile", (PyCFunction)decoderProfile, METH_O, nullptr },
+    { "createDecoder", (PyCFunction)createVideoDecoder, METH_VARARGS, nullptr },
 
     // Terminate the array with an object containing nulls.
     { nullptr, nullptr, 0, nullptr }

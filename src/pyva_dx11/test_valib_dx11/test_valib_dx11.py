@@ -75,9 +75,24 @@ def getProfile(profiles):
     for guid in guids:
         profiles.append(getGuidName(guid))
 
+def createDecoder(codec, w, h):
+    ret = pyva.init()
+    if ret == 0:
+        ret = pyva.createDecoder(w, h)
+        if ret == 0:
+            print("create video decoder: succeed")
+        else:
+            print("create video decoder: failed!")
+    pyva.free()
+
 if __name__ == "__main__":
+    # query decode profiles
     profiles = []
     getProfile(profiles)
     print(profiles)
+
+    # create video decoder
+    createDecoder("h264", 1920, 1080)
+
 
 print("finish")
