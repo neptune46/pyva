@@ -78,7 +78,7 @@ def getProfile(profiles):
 def createDecoder(codec, w, h):
     ret = pyva.init()
     if ret == 0:
-        ret = pyva.createDecoder(w, h)
+        ret = pyva.createDecoder(codec, w, h)
         if ret == 0:
             print("create video decoder: succeed")
         else:

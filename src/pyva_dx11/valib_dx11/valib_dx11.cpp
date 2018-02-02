@@ -154,15 +154,30 @@ PyObject *decoderProfile(PyObject *, PyObject* o)
         guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
 }
 
-PyObject *createVideoDecoder(PyObject *, PyObject* w, PyObject* h)
+PyObject *createVideoDecoder(PyObject *self, PyObject *args)
 {
-    std::string codecName = "h264"; // PyUnicode_AsUTF8(codec);
-    uint32_t width = 1920; // PyLong_AsLong(w);
-    uint32_t height = 1080; // PyLong_AsLong(h);
-    GUID profile = guidMap.getGuid(codecName);
+    uint32_t ret = -1;
+    const char* strCodec = nullptr;
+    uint32_t width = 0;
+    uint32_t height = 0;
 
+    // METH_O: Method 1
+    //const char* p2 = PyUnicode_AsUTF8(codec);
+
+    // METH_O: Method 2
+    //PyObject* bytes = PyUnicode_AsUTF8String(codec);
+    //std::string file_name = PyBytes_AsString(bytes);
+    //if (PyErr_Occurred()) 
+    //    return NULL;
+
+    // METH_VARARGS: Method 3
+    if (!PyArg_ParseTuple(args, "sII", &strCodec, &width, &height))
+        return PyLong_FromLong(ret);
+
+    GUID profile = guidMap.getGuid(strCodec);
     HRESULT hr = decoderObj.createVideoDecoder(profile, width, height);
-    uint32_t ret = SUCCEEDED(hr) ? 0 : -1;
+    ret = SUCCEEDED(hr) ? 0 : -1;
+
     return PyLong_FromLong(ret);
 }
 
