@@ -1,4 +1,5 @@
 
+import sys
 import uuid
 import pyva
 
@@ -64,35 +65,39 @@ def getGuidName(x):
     return name
 
 def getProfile(profiles):
-    guids = []
+    print("#"*16 + " " + sys._getframe().f_code.co_name + " " + "#"*16)
     ret = pyva.init()
     if ret == 0:
         num = pyva.getDecoderProfileCount()
         for i in range(num):
-            guids.append(uuid.UUID(pyva.getDecoderProfile(i)))
-        pyva.free()
-    
-    for guid in guids:
-        profiles.append(getGuidName(guid))
+            guid = uuid.UUID(pyva.getDecoderProfile(i))
+            profiles.append(getGuidName(guid))
+    pyva.free()
+
+    for p in profiles:
+        print(p)
 
 def createDecoder(codec, w, h):
     ret = pyva.init()
     if ret == 0:
         ret = pyva.createDecoder(codec, w, h)
-        if ret == 0:
-            print("create video decoder: succeed")
-        else:
-            print("create video decoder: failed!")
+        b = "Success: " if ret == 0 else "Failed: "
+        print("%s %d, %d" % (b, w, h))
     pyva.free()
+
+def testCreateDecoder() :
+    print("#"*16 + " " + sys._getframe().f_code.co_name + " " + "#"*16)
+    # res = [(w, h) for w in range(16, 1024, 16) for h in range(16, 1024, 16)]
+    for w in range(16, 4096, 16) :
+        for h in range(16, 4096, 16) :
+            createDecoder("h264", w, h)
 
 if __name__ == "__main__":
     # query decode profiles
     profiles = []
     getProfile(profiles)
-    print(profiles)
 
     # create video decoder
-    createDecoder("h264", 1920, 1080)
-
+    createDecoder("h264", 4096, 4096)
 
 print("finish")
