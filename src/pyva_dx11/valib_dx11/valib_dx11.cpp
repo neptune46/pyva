@@ -16,6 +16,24 @@
         res = nullptr;     \
     }
 
+struct DXVADecBuf
+{
+    D3D11_VIDEO_DECODER_BUFFER_TYPE bufType;
+    uint8_t *pBufData;
+    uint32_t bufSize;
+};
+
+struct DXVAData
+{
+    GUID guidDecoder;
+    uint32_t picWidth;
+    uint32_t picHeight;
+    uint32_t mbCount;
+    uint32_t isShortFormat;
+    uint32_t dxvaBufNum;
+    DXVADecBuf dxvaDecBuffers[4];
+};
+
 struct GuidMap
 {
     GuidMap()
@@ -53,6 +71,7 @@ public:
     HRESULT getVideoDecoderProfile(uint32_t index, GUID* guid);
 
     HRESULT createVideoDecoder(GUID profile, uint32_t width, uint32_t height, DXGI_FORMAT format = DXGI_FORMAT_NV12);
+    HRESULT decodeFrame(DXVAData* compData);
 
 private:
     ID3D11Device* d3d11Device_ = nullptr;
@@ -122,6 +141,11 @@ HRESULT VideoDecoder::createVideoDecoder(GUID profile, uint32_t width, uint32_t 
     return d3d11VideoDevice_->CreateVideoDecoder(&desc, &config, &videoDecoder_);
 }
 
+HRESULT VideoDecoder::decodeFrame(DXVAData* compData)
+{
+    return S_OK;
+}
+
 VideoDecoder decoderObj;
 
 PyObject *init(PyObject *)
@@ -181,6 +205,13 @@ PyObject *createVideoDecoder(PyObject *self, PyObject *args)
     return PyLong_FromLong(ret);
 }
 
+PyObject *decodeFrame(PyObject *self, PyObject *args)
+{
+    uint32_t ret = 0;
+
+    return PyLong_FromLong(ret);
+}
+
 static PyMethodDef pyva_methods[] = {
     // The first property is the name exposed to Python, the second is the C++
     // function name that contains the implementation.
@@ -189,6 +220,7 @@ static PyMethodDef pyva_methods[] = {
     { "getDecoderProfileCount", (PyCFunction)decoderProfileCount, METH_NOARGS, nullptr },
     { "getDecoderProfile", (PyCFunction)decoderProfile, METH_O, nullptr },
     { "createDecoder", (PyCFunction)createVideoDecoder, METH_VARARGS, nullptr },
+    { "decodeFrame", (PyCFunction)decodeFrame, METH_VARARGS, nullptr },
 
     // Terminate the array with an object containing nulls.
     { nullptr, nullptr, 0, nullptr }
