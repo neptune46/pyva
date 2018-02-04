@@ -78,6 +78,7 @@ def getProfile(profiles):
         print(p)
 
 def createDecoder(codec, w, h):
+    print("#"*16 + " " + sys._getframe().f_code.co_name + " " + "#"*16)
     ret = pyva.init()
     if ret == 0:
         ret = pyva.createDecoder(codec, w, h)
@@ -86,7 +87,6 @@ def createDecoder(codec, w, h):
     pyva.free()
 
 def testCreateDecoder() :
-    print("#"*16 + " " + sys._getframe().f_code.co_name + " " + "#"*16)
     # res = [(w, h) for w in range(16, 1024, 16) for h in range(16, 1024, 16)]
     for w in range(16, 4096, 16) :
         for h in range(16, 4096, 16) :
@@ -98,6 +98,6 @@ if __name__ == "__main__":
     getProfile(profiles)
 
     # create video decoder
-    createDecoder("h264", 4096, 4096)
+    createDecoder("h264", 1920, 1080)
 
 print("finish")
