@@ -92,6 +92,15 @@ def testCreateDecoder() :
         for h in range(16, 4096, 16) :
             createDecoder("h264", w, h)
 
+def decodeFrame():
+    print("#"*16 + " " + sys._getframe().f_code.co_name + " " + "#"*16)
+    ret = pyva.init()
+    if ret == 0:
+        ret = pyva.createDecoder(codec, w, h)
+    if ret == 0:
+        ret = pyva.decodeFrame()
+    pyva.free()
+
 if __name__ == "__main__":
     # query decode profiles
     profiles = []
